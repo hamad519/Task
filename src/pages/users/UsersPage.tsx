@@ -159,19 +159,33 @@ const UsersPage: React.FC = () => {
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
+  
     try {
+      // Optionally reset pagination to page 1
+      setPaginationState(prev => ({
+        ...prev,
+        current: 1
+      }))
+  
+      // Clear any grid selection if needed
+      // gridRef.current?.api?.deselectAll() // if using a gridRef
+  
       await refetch({
-        page: pagination.current,
+        page: 1,
         limit: pagination.pageSize,
         email: filters.email || undefined,
         role: filters.role || undefined,
       })
-      messageApi.success('Data refreshed successfully!')
+  
+      messageApi.success('Table refreshed successfully!')
     } catch (error) {
       console.error('Refresh error:', error)
       messageApi.error('Failed to refresh data')
+    } finally {
+      setIsRefreshing(false)
     }
   }
+  
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
